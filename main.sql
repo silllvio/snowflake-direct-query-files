@@ -9,7 +9,7 @@ CREDENTIALS = (AZURE_SAS_TOKEN='sp=racwdl&st=token')
 list @raw_stage.PUBLIC.stg
 
 
--- drop file FORMAT RAW_DB.PUBLIC.JSON 
+-- drop file FORMAT if exists RAW_DB.PUBLIC.JSON 
 CREATE FILE FORMAT if not exists RAW_DB.PUBLIC.JSON 
 TYPE = 'JSON' 
 COMPRESSION = 'AUTO' 
@@ -66,3 +66,11 @@ FROM @raw_stage.PUBLIC.stg
 lateral flatten( input => parse_json($1))
 )
 select * from cte_result;
+
+-- cleanig
+remove @raw_stage.PUBLIC.stg pattern='sample.*'
+drop stage if exists raw_stage.PUBLIC.stg;
+drop file FORMAT if exists RAW_DB.PUBLIC.JSON
+drop database raw_stage;
+
+
